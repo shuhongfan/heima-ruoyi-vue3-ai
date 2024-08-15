@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.merchant.mapper.DishMapper">
+    
+    <resultMap type="Dish" id="DishResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="price"    column="price"    />
+        <result property="image"    column="image"    />
+        <result property="description"    column="description"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="DishDishFlavorResult" type="Dish" extends="DishResult">
+        <collection property="dishFlavorList" notNullColumn="sub_id" javaType="java.util.List" resultMap="DishFlavorResult" />
+    </resultMap>
+
+    <resultMap type="DishFlavor" id="DishFlavorResult">
+        <result property="id"    column="sub_id"    />
+        <result property="dishId"    column="sub_dish_id"    />
+        <result property="name"    column="sub_name"    />
+        <result property="value"    column="sub_value"    />
+    </resultMap>
+
+    <sql id="selectDishVo">
+        select id, name, price, image, description, status, create_time, update_time from tb_dish
+    </sql>
+
+    <select id="selectDishList" parameterType="Dish" resultMap="DishResult">
+        <include refid="selectDishVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectDishById" parameterType="Long" resultMap="DishDishFlavorResult">
+        select a.id, a.name, a.price, a.image, a.description, a.status, a.create_time, a.update_time,
+ b.id as sub_id, b.dish_id as sub_dish_id, b.name as sub_name, b.value as sub_value
+        from tb_dish a
+        left join tb_dish_flavor b on b.dish_id = a.id
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertDish" parameterType="Dish" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_dish
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="price != null">price,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="price != null">#{price},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDish" parameterType="Dish">
+        update tb_dish
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDishById" parameterType="Long">
+        delete from tb_dish where id = #{id}
+    </delete>
+
+    <delete id="deleteDishByIds" parameterType="String">
+        delete from tb_dish where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteDishFlavorByDishIds" parameterType="String">
+        delete from tb_dish_flavor where dish_id in 
+        <foreach item="dishId" collection="array" open="(" separator="," close=")">
+            #{dishId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteDishFlavorByDishId" parameterType="Long">
+        delete from tb_dish_flavor where dish_id = #{dishId}
+    </delete>
+
+    <insert id="batchDishFlavor">
+        insert into tb_dish_flavor( id, dish_id, name, value) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.dishId}, #{item.name}, #{item.value})
+        </foreach>
+    </insert>
+</mapper>

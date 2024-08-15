@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.EmpMapper">
+    
+    <resultMap type="Emp" id="EmpResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="roleCode"    column="role_code"    />
+        <result property="roleName"    column="role_name"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="image"    column="image"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEmpVo">
+        select id, user_name, region_id, region_name, role_id, role_code, role_name, mobile, image, status, create_time, update_time from tb_emp
+    </sql>
+
+    <select id="selectEmpList" parameterType="Emp" resultMap="EmpResult">
+        <include refid="selectEmpVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="regionId != null "> and region_id = #{regionId}</if>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+            <if test="roleCode != null  and roleCode != ''"> and role_code = #{roleCode}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectEmpById" parameterType="Long" resultMap="EmpResult">
+        <include refid="selectEmpVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEmp" parameterType="Emp" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_emp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="regionId != null">region_id,</if>
+            <if test="regionName != null">region_name,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="roleCode != null">role_code,</if>
+            <if test="roleName != null">role_name,</if>
+            <if test="mobile != null and mobile != ''">mobile,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="regionId != null">#{regionId},</if>
+            <if test="regionName != null">#{regionName},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="roleCode != null">#{roleCode},</if>
+            <if test="roleName != null">#{roleName},</if>
+            <if test="mobile != null and mobile != ''">#{mobile},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEmp" parameterType="Emp">
+        update tb_emp
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="regionName != null">region_name = #{regionName},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="roleCode != null">role_code = #{roleCode},</if>
+            <if test="roleName != null">role_name = #{roleName},</if>
+            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEmpById" parameterType="Long">
+        delete from tb_emp where id = #{id}
+    </delete>
+
+    <delete id="deleteEmpByIds" parameterType="String">
+        delete from tb_emp where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

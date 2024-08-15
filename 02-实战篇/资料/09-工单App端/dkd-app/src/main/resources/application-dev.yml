@@ -1,0 +1,17 @@
+dkd:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: dkd
+    username: root
+    password: root
+  redis:
+    host: localhost
+    port: 6379
+    password: root
+  sms:
+    key:
+    secret:
+    sign-name: 阿里云短信测试
+    template-code: SMS_154950909

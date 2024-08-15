@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.RoleMapper">
+    
+    <resultMap type="Role" id="RoleResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="roleCode"    column="role_code"    />
+        <result property="roleName"    column="role_name"    />
+    </resultMap>
+
+    <sql id="selectRoleVo">
+        select role_id, role_code, role_name from tb_role
+    </sql>
+
+    <select id="selectRoleList" parameterType="Role" resultMap="RoleResult">
+        <include refid="selectRoleVo"/>
+        <where>  
+            <if test="roleCode != null  and roleCode != ''"> and role_code = #{roleCode}</if>
+            <if test="roleName != null  and roleName != ''"> and role_name like concat('%', #{roleName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectRoleByRoleId" parameterType="Long" resultMap="RoleResult">
+        <include refid="selectRoleVo"/>
+        where role_id = #{roleId}
+    </select>
+        
+    <insert id="insertRole" parameterType="Role" useGeneratedKeys="true" keyProperty="roleId">
+        insert into tb_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleCode != null">role_code,</if>
+            <if test="roleName != null">role_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleCode != null">#{roleCode},</if>
+            <if test="roleName != null">#{roleName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRole" parameterType="Role">
+        update tb_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleCode != null">role_code = #{roleCode},</if>
+            <if test="roleName != null">role_name = #{roleName},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteRoleByRoleId" parameterType="Long">
+        delete from tb_role where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteRoleByRoleIds" parameterType="String">
+        delete from tb_role where role_id in 
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,31 @@
+server:
+  port: 9007
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    druid:
+      driver-class-name: ${dkd.datasource.driver-class-name}
+      url: jdbc:mysql://${dkd.datasource.host}:${dkd.datasource.port}/${dkd.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${dkd.datasource.username}
+      password: ${dkd.datasource.password}
+  redis:
+    host: ${dkd.redis.host}
+    port: ${dkd.redis.port}
+    password: ${dkd.redis.password}
+  cache:
+    type: redis
+
+mybatis-plus:
+  type-aliases-package: com.dkd.app.domain
+  configuration:
+    # 开启驼峰命名规则映射  表 user_name  -> 实体类 userName
+    map-underscore-to-camel-case: true
+    # 控制台打印SQL日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

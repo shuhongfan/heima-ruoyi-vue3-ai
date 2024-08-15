@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>帝可得</title>
+	<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no" name="format-detection" />
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<script src="js/qrcode.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/vue-resource.min.js"></script>
+	<script src="js/mqtt.min.js"></script>
+	<script src="js/location.js"></script>
+</head>
+
+<body>
+	<div class="aui-flexView" id="lkdApp">
+		<div class="aui-scrollView">
+			<div class="aui-fresh-box">
+				<div class="aui-search-box"></div>
+			</div>
+			<div class="aui-goods-item">
+				<div class="aui-list-theme-box">
+					<div v-for="(item, index) in list" :key="index" :class="{'aui-list-item':true, 'aui-list-item-end':item.soldOut}">
+						<div v-if="item.capacity>0"  @click="payHandle(item)" class="list-item">
+							<div class="aui-list-theme-img">
+								<img :src="item.image" alt="">
+							</div>
+							<div class="aui-list-theme-message">
+								<h3 class="aui-list-theme-title">{{item.skuName}}</h3>
+								<p>￥{{(item.realPrice/100).toFixed(2)}}</p>
+							</div>
+						</div>
+						<div v-else class="aui-list-item-end">
+							<img src="images/sold.png" class="sold" />
+							<div class="aui-list-theme-img">
+								<img :src="item.image" alt="">
+							</div>
+							<div class="aui-list-theme-message-end">
+								<h3 class="aui-list-theme-title">{{item.skuName}}</h3>
+								<p>￥{{(item.realPrice/100).toFixed(2)}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="aui-text">
+				<p>-- 没有更多商品 --</p>
+			</div>
+		</div>
+		<!-- 弹窗 -->
+		<div v-if="isShow" class="mask">
+			<div class="payInfo">
+				<span class="cls" @click="closeHandle()">X</span>
+				<div>
+					<div v-if="selectedpay" class="selectedpay">
+						<div class="title">请选择支付方式</div>
+						<div class="selectedpays">
+							<div class="Payment" @click="payTypeHandle('wxpay')">
+								<img src="images/wxpay.png" alt="" style="width: 100px;height: 100px">
+								<p>微信支付</p>
+							</div>
+							<div class="Payment" @click="payTypeHandle('alipay')">
+								<img src="images/alipay.png" alt="" style="width: 90px;height: 90px;margin-top: 7px">
+								<p>支付宝支付</p>
+							</div>
+						</div>
+					</div>
+					<div v-if="!selectedpay" class="selectedpay">
+						<div id="qr"></div>
+					</div>
+				</div>
+				<div class="info">
+					<div><img :src="details.image" alt=""></div>
+					<div class="tit">
+						<p>{{details.skuName}}</p>
+						<p>￥{{(details.realPrice/100).toFixed(2)}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+
+	let domain = "http://localhost:9008";
+	let innerCode = getUrlParam('innerCode');  //售货机编号
+	let vue = new Vue({
+		el: '#lkdApp',
+		data () {
+			return {
+				list: [
+				],
+				isShow: false,
+				details: null,
+				selectedpay: true,//控制支付方式和二维码显示那个
+				imgUrl: 'images/ewm.png' // 二维码图片地址
+			}
+		},
+		methods: {
+			payHandle (item) {
+				this.isShow = true
+				this.details = item
+			},
+			closeHandle () {
+				this.isShow = false
+				this.selectedpay = true
+			},
+			showList(){
+				this.$http.get( domain + '/vm/skuList/'+innerCode).then( (res)=>{
+					this.list= res.body;
+				})
+			},
+			payTypeHandle (type) {
+
+				let d=new Date();
+				let requesId= innerCode+"_"+ d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+				
+				this.$http.post( domain + '/order/requestPay/native/'+type,{					
+					"innerCode":innerCode,
+					"openId":"",
+					"skuId":this.details.skuId
+				} ,{
+					headers: 
+					{
+						'requestId': requesId
+					}
+				}
+				
+				 ).then( (res)=>{
+					// 生成二维码
+					let qrcode = new QRCode("qr", {
+						width: 100,
+						height: 100,
+						//text:  res.body.code_url , // 二维码地址
+						text:  'images/ewm.png', // 二维码图片地址
+						colorDark: "#000",
+						colorLight: "#fff",
+					});
+				} )	.catch(function(error) {
+                     console.log(error);
+                });		
+
+				this.selectedpay = false
+			}
+		},
+		mounted: function () {
+			this.showList();
+			console.log(innerCode)
+		}
+	})
+
+
+
+	// 接收消息用于关闭窗口
+	var client  = mqtt.connect('ws://192.168.200.128/mqtt', {
+      port: 8083,
+      clientId: 'vmClient_' + innerCode,
+      username: 'admin',
+      password: 'public',
+      clean: true
+    })
+    client.on('connect', function () {
+      client.subscribe('presence', function (err) {
+        console.log('连接成功:')
+        client.subscribe('$share/screen/vm/'+innerCode+"/vendout"  , { qos:2 }, (error) => {
+          if (!error) {
+            console.log('订阅成功')
+          } else {
+            console.log('订阅失败')
+          }
+        })
+      })
+    })
+    client.on('message', (topic, message) => {
+	  vue.closeHandle()
+	  vue.showList()
+    })
+	
+
+
+</script>
+
+</html>

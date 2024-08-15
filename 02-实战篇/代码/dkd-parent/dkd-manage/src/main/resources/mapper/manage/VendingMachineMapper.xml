@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.VendingMachineMapper">
+    
+    <resultMap type="VendingMachine" id="VendingMachineResult">
+        <result property="id"    column="id"    />
+        <result property="innerCode"    column="inner_code"    />
+        <result property="channelMaxCapacity"    column="channel_max_capacity"    />
+        <result property="nodeId"    column="node_id"    />
+        <result property="addr"    column="addr"    />
+        <result property="lastSupplyTime"    column="last_supply_time"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="partnerId"    column="partner_id"    />
+        <result property="vmTypeId"    column="vm_type_id"    />
+        <result property="vmStatus"    column="vm_status"    />
+        <result property="runningStatus"    column="running_status"    />
+        <result property="longitudes"    column="longitudes"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="clientId"    column="client_id"    />
+        <result property="policyId"    column="policy_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVendingMachineVo">
+        select id, inner_code, channel_max_capacity, node_id, addr, last_supply_time, business_type, region_id, partner_id, vm_type_id, vm_status, running_status, longitudes, latitude, client_id, policy_id, create_time, update_time from tb_vending_machine
+    </sql>
+
+    <select id="selectVendingMachineList" parameterType="VendingMachine" resultMap="VendingMachineResult">
+        <include refid="selectVendingMachineVo"/>
+        <where>  
+            <if test="innerCode != null  and innerCode != ''"> and inner_code = #{innerCode}</if>
+            <if test="nodeId != null "> and node_id = #{nodeId}</if>
+            <if test="businessType != null "> and business_type = #{businessType}</if>
+            <if test="regionId != null "> and region_id = #{regionId}</if>
+            <if test="partnerId != null "> and partner_id = #{partnerId}</if>
+            <if test="vmTypeId != null "> and vm_type_id = #{vmTypeId}</if>
+            <if test="vmStatus != null "> and vm_status = #{vmStatus}</if>
+            <if test="runningStatus != null  and runningStatus != ''"> and running_status = #{runningStatus}</if>
+            <if test="policyId != null "> and policy_id = #{policyId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVendingMachineById" parameterType="Long" resultMap="VendingMachineResult">
+        <include refid="selectVendingMachineVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVendingMachine" parameterType="VendingMachine" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_vending_machine
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="innerCode != null">inner_code,</if>
+            <if test="channelMaxCapacity != null">channel_max_capacity,</if>
+            <if test="nodeId != null">node_id,</if>
+            <if test="addr != null">addr,</if>
+            <if test="lastSupplyTime != null">last_supply_time,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="regionId != null">region_id,</if>
+            <if test="partnerId != null">partner_id,</if>
+            <if test="vmTypeId != null">vm_type_id,</if>
+            <if test="vmStatus != null">vm_status,</if>
+            <if test="runningStatus != null">running_status,</if>
+            <if test="longitudes != null">longitudes,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="clientId != null">client_id,</if>
+            <if test="policyId != null">policy_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="innerCode != null">#{innerCode},</if>
+            <if test="channelMaxCapacity != null">#{channelMaxCapacity},</if>
+            <if test="nodeId != null">#{nodeId},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="lastSupplyTime != null">#{lastSupplyTime},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="regionId != null">#{regionId},</if>
+            <if test="partnerId != null">#{partnerId},</if>
+            <if test="vmTypeId != null">#{vmTypeId},</if>
+            <if test="vmStatus != null">#{vmStatus},</if>
+            <if test="runningStatus != null">#{runningStatus},</if>
+            <if test="longitudes != null">#{longitudes},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="clientId != null">#{clientId},</if>
+            <if test="policyId != null">#{policyId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVendingMachine" parameterType="VendingMachine">
+        update tb_vending_machine
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="innerCode != null">inner_code = #{innerCode},</if>
+            <if test="channelMaxCapacity != null">channel_max_capacity = #{channelMaxCapacity},</if>
+            <if test="nodeId != null">node_id = #{nodeId},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="lastSupplyTime != null">last_supply_time = #{lastSupplyTime},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="partnerId != null">partner_id = #{partnerId},</if>
+            <if test="vmTypeId != null">vm_type_id = #{vmTypeId},</if>
+            <if test="vmStatus != null">vm_status = #{vmStatus},</if>
+            <if test="runningStatus != null">running_status = #{runningStatus},</if>
+            <if test="longitudes != null">longitudes = #{longitudes},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="clientId != null">client_id = #{clientId},</if>
+            <if test="policyId != null">policy_id = #{policyId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVendingMachineById" parameterType="Long">
+        delete from tb_vending_machine where id = #{id}
+    </delete>
+
+    <delete id="deleteVendingMachineByIds" parameterType="String">
+        delete from tb_vending_machine where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

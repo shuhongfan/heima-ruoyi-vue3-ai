@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.RegionMapper">
+
+    <resultMap type="Region" id="RegionResult">
+        <result property="id"    column="id"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectRegionVo">
+        select id, region_name, create_time, update_time, create_by, update_by, remark from tb_region
+    </sql>
+
+    <select id="selectRegionList" parameterType="Region" resultMap="RegionResult">
+        <include refid="selectRegionVo"/>
+        <where>
+            <if test="regionName != null  and regionName != ''"> and region_name like concat('%', #{regionName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectRegionById" parameterType="Long" resultMap="RegionResult">
+        <include refid="selectRegionVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectRegionVoList" resultType="com.dkd.manage.domain.vo.RegionVo">
+        SELECT r.*, COUNT(n.id) AS node_count FROM tb_region r LEFT JOIN tb_node n ON r.id = n.region_id
+        <where>
+            <if test="regionName != null  and regionName != ''"> and r.region_name like concat('%', #{regionName}, '%')</if>
+        </where>
+        GROUP BY r.id
+    </select>
+
+    <insert id="insertRegion" parameterType="Region" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="regionName != null and regionName != ''">region_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regionName != null and regionName != ''">#{regionName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRegion" parameterType="Region">
+        update tb_region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regionName != null and regionName != ''">region_name = #{regionName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRegionById" parameterType="Long">
+        delete from tb_region where id = #{id}
+    </delete>
+
+    <delete id="deleteRegionByIds" parameterType="String">
+        delete from tb_region where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

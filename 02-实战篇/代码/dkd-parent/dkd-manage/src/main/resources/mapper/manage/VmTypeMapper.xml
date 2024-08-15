@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.VmTypeMapper">
+    
+    <resultMap type="VmType" id="VmTypeResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="model"    column="model"    />
+        <result property="image"    column="image"    />
+        <result property="vmRow"    column="vm_row"    />
+        <result property="vmCol"    column="vm_col"    />
+        <result property="channelMaxCapacity"    column="channel_max_capacity"    />
+    </resultMap>
+
+    <sql id="selectVmTypeVo">
+        select id, name, model, image, vm_row, vm_col, channel_max_capacity from tb_vm_type
+    </sql>
+
+    <select id="selectVmTypeList" parameterType="VmType" resultMap="VmTypeResult">
+        <include refid="selectVmTypeVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+        </where>
+    </select>
+    
+    <select id="selectVmTypeById" parameterType="Long" resultMap="VmTypeResult">
+        <include refid="selectVmTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVmType" parameterType="VmType" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_vm_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="model != null and model != ''">model,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="vmRow != null">vm_row,</if>
+            <if test="vmCol != null">vm_col,</if>
+            <if test="channelMaxCapacity != null">channel_max_capacity,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="model != null and model != ''">#{model},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="vmRow != null">#{vmRow},</if>
+            <if test="vmCol != null">#{vmCol},</if>
+            <if test="channelMaxCapacity != null">#{channelMaxCapacity},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVmType" parameterType="VmType">
+        update tb_vm_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="model != null and model != ''">model = #{model},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="vmRow != null">vm_row = #{vmRow},</if>
+            <if test="vmCol != null">vm_col = #{vmCol},</if>
+            <if test="channelMaxCapacity != null">channel_max_capacity = #{channelMaxCapacity},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVmTypeById" parameterType="Long">
+        delete from tb_vm_type where id = #{id}
+    </delete>
+
+    <delete id="deleteVmTypeByIds" parameterType="String">
+        delete from tb_vm_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

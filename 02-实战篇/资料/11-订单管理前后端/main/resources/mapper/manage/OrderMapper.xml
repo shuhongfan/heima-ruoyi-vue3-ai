@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.OrderMapper">
+
+    <resultMap type="Order" id="OrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="thirdNo"    column="third_no"    />
+        <result property="innerCode"    column="inner_code"    />
+        <result property="channelCode"    column="channel_code"    />
+        <result property="skuId"    column="sku_id"    />
+        <result property="skuName"    column="sku_name"    />
+        <result property="classId"    column="class_id"    />
+        <result property="status"    column="status"    />
+        <result property="amount"    column="amount"    />
+        <result property="price"    column="price"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payStatus"    column="pay_status"    />
+        <result property="bill"    column="bill"    />
+        <result property="addr"    column="addr"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="partnerId"    column="partner_id"    />
+        <result property="openId"    column="open_id"    />
+        <result property="nodeId"    column="node_id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="cancelDesc"    column="cancel_desc"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectOrderVo">
+        select id, order_no, third_no, inner_code, channel_code, sku_id, sku_name, class_id, status, amount, price, pay_type, pay_status, bill, addr, region_id, region_name, business_type, partner_id, open_id, node_id, node_name, cancel_desc, create_time, update_time from tb_order
+    </sql>
+
+    <select id="selectOrderList" parameterType="Order" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        <where>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertOrder" parameterType="Order">
+        insert into tb_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="thirdNo != null">third_no,</if>
+            <if test="innerCode != null">inner_code,</if>
+            <if test="channelCode != null">channel_code,</if>
+            <if test="skuId != null">sku_id,</if>
+            <if test="skuName != null">sku_name,</if>
+            <if test="classId != null">class_id,</if>
+            <if test="status != null">status,</if>
+            <if test="amount != null">amount,</if>
+            <if test="price != null">price,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="payStatus != null">pay_status,</if>
+            <if test="bill != null">bill,</if>
+            <if test="addr != null">addr,</if>
+            <if test="regionId != null">region_id,</if>
+            <if test="regionName != null">region_name,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="partnerId != null">partner_id,</if>
+            <if test="openId != null">open_id,</if>
+            <if test="nodeId != null">node_id,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="cancelDesc != null">cancel_desc,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="thirdNo != null">#{thirdNo},</if>
+            <if test="innerCode != null">#{innerCode},</if>
+            <if test="channelCode != null">#{channelCode},</if>
+            <if test="skuId != null">#{skuId},</if>
+            <if test="skuName != null">#{skuName},</if>
+            <if test="classId != null">#{classId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="price != null">#{price},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payStatus != null">#{payStatus},</if>
+            <if test="bill != null">#{bill},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="regionId != null">#{regionId},</if>
+            <if test="regionName != null">#{regionName},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="partnerId != null">#{partnerId},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="nodeId != null">#{nodeId},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="cancelDesc != null">#{cancelDesc},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrder" parameterType="Order">
+        update tb_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="thirdNo != null">third_no = #{thirdNo},</if>
+            <if test="innerCode != null">inner_code = #{innerCode},</if>
+            <if test="channelCode != null">channel_code = #{channelCode},</if>
+            <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="skuName != null">sku_name = #{skuName},</if>
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="payStatus != null">pay_status = #{payStatus},</if>
+            <if test="bill != null">bill = #{bill},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="regionName != null">region_name = #{regionName},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="partnerId != null">partner_id = #{partnerId},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+            <if test="nodeId != null">node_id = #{nodeId},</if>
+            <if test="nodeName != null">node_name = #{nodeName},</if>
+            <if test="cancelDesc != null">cancel_desc = #{cancelDesc},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOrderById" parameterType="Long">
+        delete from tb_order where id = #{id}
+    </delete>
+
+    <delete id="deleteOrderByIds" parameterType="String">
+        delete from tb_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

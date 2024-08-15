@@ -1,0 +1,63 @@
+.hidden { 
+	display: none !important; 
+}
+.selectPickerWrapper *{box-sizing: border-box;}
+.selectPickerWrapper{
+	position:relative;
+	margin:16px 3px;
+	display:inline-block;
+}
+.select-picker-search{
+	width:68px;
+	height:24px;
+	line-height:24px;
+	color:#666;
+	border-radius:24px;
+	padding:0 10px;
+	font-size:15px;
+	cursor:pointer;
+	background-color: #FFFFFF;
+}
+.select-picker-search-checked{
+	position:relative;
+	width:50px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding-right: 5px;
+}
+.select-picker-search-checked:after{
+	border: 5px solid transparent; content: ' ';
+	height: 0; position: absolute;
+	width: 0; 
+	top:9.2px; 
+	border-top: 8px solid #EFEFEF; 
+	right:0; 
+}
+.select-picker-options-wrp{
+	display:none;
+	width:200px;
+	border-radius: 2px;
+	box-shadow: 0 1px 5px rgba(0,0,0,.2);
+	background-color: #fff;
+	position:absolute;
+	top:36px;left:0;z-index:999;}
+.select-picker-options-serch input{width:160px;height:32px;line-height:32px;border:1px solid #ddd;border-radius:3px;margin:12px 0 0 10px;padding-left:8px;}
+.select-picker-options-serch input:focus{border-color: #66afe9;outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6); box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6)}
+.select-picker-options-list{width:100%;padding:8px 0;}
+.select-picker-options-list-item{width:100%;line-height:36px;cursor: pointer;padding:0 12px;}
+.select-picker-options-list-item:hover{background: #ebf1f5;}
+.duihao {display:inline-block;width:18px;height:18px;border-radius:3px;transform: translateY(4px);margin-right:6px;}
+.duihao-checked {  background:#00a0ff; position: relative; }
+.duihao-checked:before, .duihao-checked::after {
+	content:""; height:10px; width:2px;
+	border-radius: 10px; display:block;
+	background:white; position: absolute;
+	top:4px;  left:10px; 
+	transform:rotate(45deg);-ms-transform:rotate(45deg);    
+}
+.duihao-checked::before {
+	height:6px; transform: rotate(-45deg); -ms-transform:rotate(-45deg);
+	position: absolute;  top:7px; left:5px;       
+}
+.duihao-nocheck{border:1px solid #ddd;}

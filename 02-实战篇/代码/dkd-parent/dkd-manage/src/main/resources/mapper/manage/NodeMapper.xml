@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.NodeMapper">
+
+    <resultMap type="Node" id="NodeResult">
+        <result property="id"    column="id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="address"    column="address"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="partnerId"    column="partner_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="NodeVoResult" type="NodeVo">
+        <result property="id"    column="id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="address"    column="address"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="partnerId"    column="partner_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+        <result property="vmCount" column="vm_count"/>
+        <association property="region" javaType="Region" column="region_id" select="com.dkd.manage.mapper.RegionMapper.selectRegionById"/>
+        <association property="partner" javaType="Partner" column="partner_id" select="com.dkd.manage.mapper.PartnerMapper.selectPartnerById"/>
+    </resultMap>
+
+    <sql id="selectNodeVo">
+        select id, node_name, address, business_type, region_id, partner_id, create_time, update_time, create_by, update_by, remark from tb_node
+    </sql>
+
+    <select id="selectNodeList" parameterType="Node" resultMap="NodeResult">
+        <include refid="selectNodeVo"/>
+        <where>
+            <if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="regionId != null "> and region_id = #{regionId}</if>
+            <if test="partnerId != null "> and partner_id = #{partnerId}</if>
+        </where>
+    </select>
+
+    <select id="selectNodeById" parameterType="Long" resultMap="NodeResult">
+        <include refid="selectNodeVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectNodeVoList" resultMap="NodeVoResult">
+        SELECT
+            n.id,
+            n.node_name,
+            n.address,
+            n.business_type,
+            n.region_id,
+            n.partner_id,
+            n.create_time,
+            n.update_time,
+            n.create_by,
+            n.update_by,
+            n.remark,
+            COUNT(v.id) AS vm_count
+        FROM
+            tb_node n
+                LEFT JOIN
+            tb_vending_machine v ON n.id = v.node_id
+        <where>
+            <if test="nodeName != null  and nodeName != ''"> and n.node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="regionId != null "> and n.region_id = #{regionId}</if>
+            <if test="partnerId != null "> and n.partner_id = #{partnerId}</if>
+        </where>
+        GROUP BY
+            n.id
+    </select>
+
+    <insert id="insertNode" parameterType="Node" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="regionId != null">region_id,</if>
+            <if test="partnerId != null">partner_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="regionId != null">#{regionId},</if>
+            <if test="partnerId != null">#{partnerId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNode" parameterType="Node">
+        update tb_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="partnerId != null">partner_id = #{partnerId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNodeById" parameterType="Long">
+        delete from tb_node where id = #{id}
+    </delete>
+
+    <delete id="deleteNodeByIds" parameterType="String">
+        delete from tb_node where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

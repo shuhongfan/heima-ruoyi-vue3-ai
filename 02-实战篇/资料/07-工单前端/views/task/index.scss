@@ -1,0 +1,38 @@
+@import '@/assets/styles/variables.module.scss';
+:deep(.task-status) {
+    display: flex;
+    align-items: center;
+    height: 54px;
+    margin-bottom: 25px;
+    background-color: rgba(236, 236, 236, 0.39);
+  
+    .icon {
+      margin-left: 22px;
+    }
+  
+    .status {
+      flex: 1;
+      margin-left: 16px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+  
+    .pic {
+      margin-right: 76px;
+      margin-bottom: 7px;
+    }
+  }
+  .addr{
+      display: flex;
+      .el-icon{
+          margin: 10px 5px 0 0;
+      }
+  }
+  .desc, .addr {
+    margin-top: 10px;
+    line-height: 20px;
+  
+    .svg-icon {
+      margin-right: 4px;
+      color: $--color-primary;
+    }
+  }

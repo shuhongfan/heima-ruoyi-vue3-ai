@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.course.mapper.CourseMapper">
+    
+    <resultMap type="Course" id="CourseResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="subject"    column="subject"    />
+        <result property="name"    column="name"    />
+        <result property="price"    column="price"    />
+        <result property="applicablePerson"    column="applicable_person"    />
+        <result property="info"    column="info"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCourseVo">
+        select id, code, subject, name, price, applicable_person, info, create_time, update_time from tb_course
+    </sql>
+
+    <select id="selectCourseList" parameterType="Course" resultMap="CourseResult">
+        <include refid="selectCourseVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="subject != null  and subject != ''"> and subject = #{subject}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="applicablePerson != null  and applicablePerson != ''"> and applicable_person = #{applicablePerson}</if>
+        </where>
+    </select>
+    
+    <select id="selectCourseById" parameterType="Long" resultMap="CourseResult">
+        <include refid="selectCourseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCourse" parameterType="Course" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">code,</if>
+            <if test="subject != null and subject != ''">subject,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="price != null">price,</if>
+            <if test="applicablePerson != null and applicablePerson != ''">applicable_person,</if>
+            <if test="info != null and info != ''">info,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="subject != null and subject != ''">#{subject},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="price != null">#{price},</if>
+            <if test="applicablePerson != null and applicablePerson != ''">#{applicablePerson},</if>
+            <if test="info != null and info != ''">#{info},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCourse" parameterType="Course">
+        update tb_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="subject != null and subject != ''">subject = #{subject},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="applicablePerson != null and applicablePerson != ''">applicable_person = #{applicablePerson},</if>
+            <if test="info != null and info != ''">info = #{info},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCourseById" parameterType="Long">
+        delete from tb_course where id = #{id}
+    </delete>
+
+    <delete id="deleteCourseByIds" parameterType="String">
+        delete from tb_course where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

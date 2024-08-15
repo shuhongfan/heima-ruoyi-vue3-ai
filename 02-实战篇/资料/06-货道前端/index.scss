@@ -1,0 +1,133 @@
+@import '@/assets/styles/variables.module.scss';
+:deep(.el-dialog) {
+  .vm-config-channel-dialog-wrapper,
+  .vm-select-sku-dialog-wrapper {
+    .scrollbar {
+      width: 814px;
+      height: 384px;
+      margin: 0 auto;
+      .el-scrollbar__wrap {
+        scroll-behavior: smooth;
+      }
+
+      .el-row {
+        flex-wrap: nowrap;
+      }
+      .el-col-12 {
+        width: 50%;
+        flex: 0;
+      }
+
+      .el-scrollbar__bar.is-horizontal {
+        display: none;
+      }
+    }
+  }
+}
+.vm-config-channel-dialog-wrapper,
+.vm-select-sku-dialog-wrapper {
+  position: relative;
+  width: 847px;
+  margin: 0 auto;
+
+  .channel-basic {
+    display: flex;
+    align-items: center;
+    width: 847px;
+    height: 56px;
+    margin-bottom: 16px;
+    background: $--color-function3;
+
+    .vm-row {
+      margin-left: 43px;
+    }
+
+    .vm-col {
+      margin-left: 55px;
+    }
+
+    .channel-max-capacity {
+      flex: 1;
+      margin-left: 54px;
+    }
+
+    .business-top10 {
+      margin-right: 22px;
+    }
+  }
+
+  .space {
+    margin-bottom: 20px;
+  }
+
+  // TODO: 样式和vm-select-sku-dialog冗余了
+  .arrow {
+    position: absolute;
+    top: 50%;
+    width: 50px !important;
+    height: 50px !important;
+    color: $--color-black;
+    cursor: pointer;
+  }
+
+  .disabled {
+    color: $--border-color-base;
+    cursor: auto;
+  }
+
+  .arrow-left {
+    left: -45px;
+  }
+
+  .arrow-right {
+    right: -45px;
+  }
+}
+
+.vm-select-sku-dialog-wrapper {
+  width: 750px;
+  .scrollbar {
+    width: 750px;
+    height: auto;
+
+    .el-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    :deep(.el-scrollbar__bar.is-horizontal) {
+      display: none;
+    }
+  }
+  .sku {
+    position: relative;
+    width: 134px;
+    height: 134px;
+    padding-top: 16px;
+    background-color: #f6f7fb;
+    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    .selected {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .img {
+      display: inline-block;
+      width: 83px;
+      height: 84px;
+      margin-bottom: 5px;
+      object-fit: contain;
+    }
+  }
+  .el-col-5 {
+    width: 20%;
+    flex: 0;
+  }
+  .el-col-24 {
+    flex: none;
+    margin-right: 16px;
+  }
+}

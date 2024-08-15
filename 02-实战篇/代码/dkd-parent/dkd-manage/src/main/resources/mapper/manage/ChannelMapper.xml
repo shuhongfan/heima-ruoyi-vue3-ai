@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.ChannelMapper">
+    
+    <resultMap type="Channel" id="ChannelResult">
+        <result property="id"    column="id"    />
+        <result property="channelCode"    column="channel_code"    />
+        <result property="skuId"    column="sku_id"    />
+        <result property="vmId"    column="vm_id"    />
+        <result property="innerCode"    column="inner_code"    />
+        <result property="maxCapacity"    column="max_capacity"    />
+        <result property="currentCapacity"    column="current_capacity"    />
+        <result property="lastSupplyTime"    column="last_supply_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectChannelVo">
+        select id, channel_code, sku_id, vm_id, inner_code, max_capacity, current_capacity, last_supply_time, create_time, update_time from tb_channel
+    </sql>
+
+    <select id="selectChannelList" parameterType="Channel" resultMap="ChannelResult">
+        <include refid="selectChannelVo"/>
+        <where>  
+            <if test="channelCode != null  and channelCode != ''"> and channel_code = #{channelCode}</if>
+            <if test="skuId != null "> and sku_id = #{skuId}</if>
+            <if test="vmId != null "> and vm_id = #{vmId}</if>
+            <if test="innerCode != null  and innerCode != ''"> and inner_code = #{innerCode}</if>
+            <if test="maxCapacity != null "> and max_capacity = #{maxCapacity}</if>
+            <if test="currentCapacity != null "> and current_capacity = #{currentCapacity}</if>
+            <if test="lastSupplyTime != null "> and last_supply_time = #{lastSupplyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChannelById" parameterType="Long" resultMap="ChannelResult">
+        <include refid="selectChannelVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChannel" parameterType="Channel" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelCode != null and channelCode != ''">channel_code,</if>
+            <if test="skuId != null">sku_id,</if>
+            <if test="vmId != null">vm_id,</if>
+            <if test="innerCode != null and innerCode != ''">inner_code,</if>
+            <if test="maxCapacity != null">max_capacity,</if>
+            <if test="currentCapacity != null">current_capacity,</if>
+            <if test="lastSupplyTime != null">last_supply_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelCode != null and channelCode != ''">#{channelCode},</if>
+            <if test="skuId != null">#{skuId},</if>
+            <if test="vmId != null">#{vmId},</if>
+            <if test="innerCode != null and innerCode != ''">#{innerCode},</if>
+            <if test="maxCapacity != null">#{maxCapacity},</if>
+            <if test="currentCapacity != null">#{currentCapacity},</if>
+            <if test="lastSupplyTime != null">#{lastSupplyTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChannel" parameterType="Channel">
+        update tb_channel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channelCode != null and channelCode != ''">channel_code = #{channelCode},</if>
+            <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="vmId != null">vm_id = #{vmId},</if>
+            <if test="innerCode != null and innerCode != ''">inner_code = #{innerCode},</if>
+            <if test="maxCapacity != null">max_capacity = #{maxCapacity},</if>
+            <if test="currentCapacity != null">current_capacity = #{currentCapacity},</if>
+            <if test="lastSupplyTime != null">last_supply_time = #{lastSupplyTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChannelById" parameterType="Long">
+        delete from tb_channel where id = #{id}
+    </delete>
+
+    <delete id="deleteChannelByIds" parameterType="String">
+        delete from tb_channel where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

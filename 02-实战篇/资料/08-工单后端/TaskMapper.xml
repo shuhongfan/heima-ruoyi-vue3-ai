@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dkd.manage.mapper.TaskMapper">
+
+    <resultMap type="Task" id="TaskResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskCode"    column="task_code"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="createType"    column="create_type"    />
+        <result property="innerCode"    column="inner_code"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="desc"    column="desc"    />
+        <result property="productTypeId"    column="product_type_id"    />
+        <result property="assignorId"    column="assignor_id"    />
+        <result property="addr"    column="addr"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTaskVo">
+        select task_id, task_code, task_status, create_type, inner_code, user_id, user_name, region_id, `desc`, product_type_id, assignor_id, addr, create_time, update_time from tb_task
+    </sql>
+
+    <select id="selectTaskList" parameterType="Task" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        <where>
+            <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
+            <if test="taskStatus != null "> and task_status = #{taskStatus}</if>
+            <if test="createType != null "> and create_type = #{createType}</if>
+            <if test="innerCode != null  and innerCode != ''"> and inner_code = #{innerCode}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="regionId != null "> and region_id = #{regionId}</if>
+            <if test="desc != null  and desc != ''"> and `desc` = #{desc}</if>
+            <if test="productTypeId != null "> and product_type_id = #{productTypeId}</if>
+            <if test="assignorId != null "> and assignor_id = #{assignorId}</if>
+            <if test="addr != null  and addr != ''"> and addr = #{addr}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskByTaskId" parameterType="Long" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <insert id="insertTask" parameterType="Task" useGeneratedKeys="true" keyProperty="taskId">
+        insert into tb_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskCode != null and taskCode != ''">task_code,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="createType != null">create_type,</if>
+            <if test="innerCode != null">inner_code,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="regionId != null">region_id,</if>
+            <if test="desc != null">`desc`,</if>
+            <if test="productTypeId != null">product_type_id,</if>
+            <if test="assignorId != null">assignor_id,</if>
+            <if test="addr != null">addr,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskCode != null and taskCode != ''">#{taskCode},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="createType != null">#{createType},</if>
+            <if test="innerCode != null">#{innerCode},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="regionId != null">#{regionId},</if>
+            <if test="desc != null">#{desc},</if>
+            <if test="productTypeId != null">#{productTypeId},</if>
+            <if test="assignorId != null">#{assignorId},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTask" parameterType="Task">
+        update tb_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskCode != null and taskCode != ''">task_code = #{taskCode},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="createType != null">create_type = #{createType},</if>
+            <if test="innerCode != null">inner_code = #{innerCode},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="desc != null">`desc` = #{desc},</if>
+            <if test="productTypeId != null">product_type_id = #{productTypeId},</if>
+            <if test="assignorId != null">assignor_id = #{assignorId},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteTaskByTaskId" parameterType="Long">
+        delete from tb_task where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteTaskByTaskIds" parameterType="String">
+        delete from tb_task where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+</mapper>
